@@ -532,7 +532,7 @@ function drupal_get_filename($type, $name, $filename = NULL) {
     // Fallback to searching the filesystem if the database connection is
     // not established or the requested file is not found.
     $config = conf_path();
-    $dir = (($type == 'theme_engine') ? 'themes/engines' : "${type}s");
+    $dir = (($type == 'theme_engine') ? 'themes/engines' : $type . 's');
     $file = (($type == 'theme_engine') ? "$name.engine" : "$name.$type");
 
     foreach (array("$config/$dir/$file", "$config/$dir/$name/$file", "$dir/$file", "$dir/$name/$file") as $file) {
@@ -1438,7 +1438,7 @@ function drupal_random_bytes($count) {
   // $random_state does not use drupal_static as it stores random bytes.
   static $random_state, $bytes, $has_openssl, $has_hash;
 
-  $missing_bytes = $count - strlen($bytes);
+  $missing_bytes = $count - (!isset($bytes) ? 0 : strlen($bytes));
 
   if ($missing_bytes > 0) {
     // PHP versions prior 5.3.4 experienced openssl_random_pseudo_bytes()
@@ -1556,6 +1556,10 @@ function drupal_hmac_base64($data, $key) {
  * May be used early in bootstrap.
  */
 function menu_path_is_external($path) {
+  // Empty path means its a relative URL... so not external
+  if ($path === NULL) {
+    return FALSE;
+  }
   // Avoid calling filter_xss_bad_protocol() if there is any slash (/),
   // hash (#) or question_mark (?) before the colon (:) occurrence - if any - as
   // this would clearly mean it is not a URL. If the path starts with 2 slashes

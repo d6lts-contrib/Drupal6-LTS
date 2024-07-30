@@ -1545,7 +1545,9 @@ function url($path = NULL, $options = array()) {
   // Strip leading slashes from internal paths to prevent them becoming external
   // URLs without protocol. /example.com should not be turned into
   // //example.com.
-  $path = ltrim($path, '/');
+  if ($path !== NULL) {
+    $path = ltrim($path, '/');
+  }
 
   global $base_url;
   static $script;
@@ -2063,7 +2065,7 @@ function _drupal_build_css_path($matches, $base = NULL) {
   }
 
   // Prefix with base and remove '../' segments where possible.
-  $path = $_base . $matches[1];
+  $path = $_base . ($matches[1] ?? '');
   $last = '';
   while ($path != $last) {
     $last = $path;

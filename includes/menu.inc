@@ -898,13 +898,18 @@ function menu_tree_page_data($menu_name = 'navigation') {
             $args[] = '<front>';
             $placeholders .= ", '%s'";
           }
-          $parents = db_fetch_array(db_query("SELECT p1, p2, p3, p4, p5, p6, p7, p8 FROM {menu_links} WHERE menu_name = '%s' AND link_path IN (". $placeholders .")", $args));
+          $parents = db_fetch_array(db_query("SELECT p1, p2, p3, p4, p5, p6, p7, p8 FROM {menu_links} WHERE menu_name = '%s' AND link_path IN (". $placeholders .")", $args)) ?? [];
 
           if (empty($parents)) {
             // If no link exists, we may be on a local task that's not in the links.
             // TODO: Handle the case like a local task on a specific node in the menu.
             $parents = db_fetch_array(db_query("SELECT p1, p2, p3, p4, p5, p6, p7, p8 FROM {menu_links} WHERE menu_name = '%s' AND link_path = '%s'", $menu_name, $item['tab_root']));
           }
+
+          if (!$parents) {
+            $parents = [];
+          }
+
           // We always want all the top-level links with plid == 0.
           $parents[] = '0';
 

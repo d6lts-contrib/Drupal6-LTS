@@ -332,6 +332,10 @@ function db_decode_blob($data) {
  * Prepare user input for use in a database query, preventing SQL injection attacks.
  */
 function db_escape_string($text) {
+  if (empty($text)) {
+    return $text;
+  }
+
   global $active_db;
   return mysqli_real_escape_string($active_db, $text);
 }
